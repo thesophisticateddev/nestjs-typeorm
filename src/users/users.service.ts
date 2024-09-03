@@ -11,22 +11,27 @@ export class UsersService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
   create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+    return this.userRepository.save({
+      ...createUserDto,
+      isActive: true,
+      lastChangedBy: 'Admin',
+      createdBy: 'Admin',
+    });
   }
 
   findAll() {
-    return `This action returns all users`;
+    return this.userRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  findOne(id: string) {
+    return this.userRepository.findOne({ where: { id } });
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return `This action removes a #${id} user`;
   }
 }
