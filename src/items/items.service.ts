@@ -1,17 +1,26 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateItemDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Item } from './entities/item.entity';
 import { Repository } from 'typeorm';
+import { ItemDistributor } from './entities/item.distributor.entity';
 
 @Injectable()
 export class ItemsService {
   constructor(
     @InjectRepository(Item) private readonly itemRepository: Repository<Item>,
+    @InjectRepository(ItemDistributor)
+    private readonly itemDistributorRepository: Repository<ItemDistributor>,
   ) {}
   create(createItemDto: CreateItemDto) {
-    return this.itemRepository.save(createItemDto);
+    return this.itemRepository.save({
+      ...createItemDto,
+      isActive: true,
+      internalComment: 'New Item',
+      lastChangedBy: 'Admin',
+      createdBy: 'Admin',
+    });
   }
 
   findAll() {
@@ -32,5 +41,19 @@ export class ItemsService {
 
   remove(id: string) {
     return this.itemRepository.update(id, { isActive: false });
+  }
+
+  async addItemDistributor(itemId: string, distributorId: string) {
+    const item = await this.itemRepository.findOne({ where: { id: itemId } });
+    if (item) {
+      const distributor = await this.itemDistributorRepository.findOne({
+        where: { id: distributorId },
+      });
+      return this.itemRepository.save({
+        ...item,
+        distributors: [distributor],
+      });
+    }
+    throw new NotFoundException('Item not found');
   }
 }

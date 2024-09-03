@@ -1,5 +1,6 @@
 import { BaseEntity } from 'src/utils/base.entity';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
+import { ItemDistributor } from './item.distributor.entity';
 
 @Entity()
 export class Item extends BaseEntity {
@@ -11,4 +12,10 @@ export class Item extends BaseEntity {
 
   @Column({ type: 'int', name: 'item_price' })
   quantity: number;
+
+  @ManyToMany(
+    (type) => ItemDistributor,
+    (itemDistributor) => itemDistributor.items,
+  )
+  distributors: ItemDistributor[];
 }

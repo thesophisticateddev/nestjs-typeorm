@@ -39,4 +39,12 @@ export class ItemsController {
   remove(@Param('id') id: string) {
     return this.itemsService.remove(id);
   }
+
+  @Post(':id/distributor/:did')
+  addItemDistributor(
+    @Param('id') id: string,
+    @Param('did') distributorId: string,
+  ) {
+    return this.itemsService.addItemDistributor(id, distributorId);
+  }
 }

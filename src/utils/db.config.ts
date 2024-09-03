@@ -14,7 +14,7 @@ export class DatabaseConfig {
       entities: [join(__dirname, '../**/*.entity{.ts,.js}')],
       migrationsTableName: 'migrations',
       // migrations: ['src/migrations/*{.ts,.js}'],
-      // synchronize: true,
+      synchronize: true,
       autoLoadEntities: true,
       logging: true,
     };
